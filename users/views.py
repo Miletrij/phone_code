@@ -36,9 +36,11 @@ class UserUpdateApiView(viewsets.ModelViewSet):
 #         if self.action == 'retrieve':
 #             return serializers.UserUpdateSerializer
 #         return serializers.User
+#
+#
+# class UserViewSerializer(UserUpdateApiView):
+#     model = models.User
+#     list_serializer = serializers.UserSerializer
+#     detail_serializer = serializers.UserUpdateSerializer
 
 
-class UserViewSerializer(UserUpdateApiView):
-    model = models.User
-    list_serializer = serializers.UserSerializer
-    detail_serializer = serializers.UserUpdateSerializer

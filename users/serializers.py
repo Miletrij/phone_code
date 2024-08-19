@@ -30,3 +30,8 @@ class UserUpdateSerializer(ModelSerializer):
 # class UserUpdateSerializer(serializers.HyperlinkedModelSerializer):
 #     class Meta:
 #         model = models.User
+
+def get_serializer_class(self):
+    if self.action in ['list', 'retrieve']:
+        return UserSerializer
+    return UserUpdateSerializer
