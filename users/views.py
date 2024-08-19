@@ -15,7 +15,7 @@ class UserUpdateApiView(viewsets.ModelViewSet):
         user = serializer.save()
         user.set_password(user.password)
         code = random.randint(1000, 9999)
-        user.phone_code = code
+        user.phone_code = f'код отправленный в смс {code}'
         user.is_active = False
         user.save()
 
