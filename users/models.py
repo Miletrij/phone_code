@@ -9,6 +9,8 @@ class User(AbstractUser):
     phone = models.CharField(unique=True, max_length=12, verbose_name="Телефон",
                              help_text="Введите номер телефона")
     phone_code = models.CharField(max_length=50, verbose_name="код авторизации", **NULLABLE)
+    invite_code = models.CharField(max_length=6, verbose_name="код приглашения", **NULLABLE)
+    invite_pole = models.CharField(max_length=6, verbose_name="поле для приглашения", **NULLABLE)
     USERNAME_FIELD = "phone"
     REQUIRED_FIELDS = []
 

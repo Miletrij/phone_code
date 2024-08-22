@@ -1,11 +1,14 @@
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
-from users import models
 from users.models import User
 
 
 class UserSerializer(ModelSerializer):
+    invite_pole = serializers.SerializerMethodField()
+    """
+    посмотреть проект с курсами с полем "serializer.metodfield"
+    """
     class Meta:
         model = User
         fields = "__all__"
