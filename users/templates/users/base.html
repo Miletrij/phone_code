@@ -1,0 +1,36 @@
+{% load static %}
+
+<html lang="en" data-bs-theme="auto">
+<head>
+    <script src="{% static 'js/color-modes.js' %}"></script>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+</head>
+<body>
+<h1> !!!!!!!!!!!! </h1>
+<div class="container py-3">
+    <header>
+        <div class="d-flex flex-column flex-md-row align-items-center pb-3 mb-4 border-bottom">
+            <a href="/" class="me-3 py-2 link-body-emphasis text-decoration-none">
+                <span class="fs-4">Домашняя страница</span>
+            </a>
+            {% include 'includes/inc_main_menu.html' %}
+        </div>
+    </header>
+{% block content %}
+
+{% endblock %}
+    <footer class="pt-4 my-md-5 pt-md-5 border-top">
+        <div class="row">
+            <div class="col-12 col-md">
+                <img class="mb-2" src="/docs/5.3/assets/brand/bootstrap-logo.svg" alt="" width="24" height="19">
+                <small class="d-block mb-3 text-body-secondary">&copy; 2017–2024</small>
+            </div>
+
+        </div>
+    </footer>
+</div>
+
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+
+</body>
+</html>
