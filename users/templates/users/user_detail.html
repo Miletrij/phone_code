@@ -1,0 +1,24 @@
+{% extends 'users/base.html' %}
+{% block content %}
+<div class="row text-center">
+    <div class="col-3">
+        <div class="card mb-4 box-shadow">
+            <div class="card-header">
+                <h4 class="my-0 font-weight-normal">
+                    <h5>Пользователь: {{ object.phone }}</h5>
+                    <h5>Код приглашения: ({{ object.invite_code }})</h5>
+                    <h5>Поле для кода приглашения: {{ object.invite_pole }}</h5>
+                </h4>
+            </div>
+            <div class="card-body">
+                <h4 class="card-title pricing-card-title">
+                    {% if object.invite_pole == user.invite_code %}
+                    <h5>Приглашенные пользователи: {{ object.phone }}</h5>
+                    <h5>с кодом {{ object.invite_code }}</h5>
+                    {% endif %}
+                </h4>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

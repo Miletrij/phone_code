@@ -2,7 +2,6 @@
     <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
 
         <a class="me-3 py-2 link-body-emphasis text-decoration-none" href="{% url 'users:user_list' %}">Все пользователи</a>
-        <a class="me-3 py-2 link-body-emphasis text-decoration-none" href="{% url 'users:invite_code_list' %}">Все приглашенные пользователи</a>
 
         {% if user.is_authenticated %}
         <a class="btn btn-outline-primary" href="{% url 'users:user_detail' user.pk %}">Профиль</a>
