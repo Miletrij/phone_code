@@ -12,7 +12,7 @@ from rest_framework import generics, request
 
 from django.contrib.auth import login
 
-from users.forms import UserLoginForm
+from users.forms import UserLoginForm, UserRegisterForm
 from users.models import User
 from users.serializers import UserSerializer
 
@@ -21,7 +21,7 @@ letters_and_digits = ascii_lowercase + digits
 
 class UserCreateAPIView(CreateView):
     model = User
-    form_class = UserLoginForm
+    form_class = UserRegisterForm
     success_url = reverse_lazy('users/login.html')
 
     def form_valid(self, form):

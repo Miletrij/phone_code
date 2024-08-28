@@ -1,4 +1,4 @@
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, UserChangeForm
 from django import forms
 
 from common.views import StyleFormMixin
@@ -34,6 +34,12 @@ class UserLoginForm(StyleFormMixin, forms.Form):
         'class': "form-control py-4",
         'placeholder': "Введите код"}))
 
+    class Meta:
+        model = User
+        fields = ("phone", "phone_code")
+
+
+class UserRegisterForm(StyleFormMixin, UserChangeForm):
     class Meta:
         model = User
         fields = ("phone", "phone_code")
