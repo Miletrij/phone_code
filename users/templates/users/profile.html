@@ -1,0 +1,31 @@
+{% extends 'users/base.html' %}
+{% block content %}
+
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>User Profile</title>
+</head>
+<body>
+    <h1>User Profile</h1>
+    <p>Phone Number: {{ user.phone_number }}</p>
+    <p>Invite Code: {{ user.invite_code }}</p>
+    <p>Activated Invite Code: {{ user.invite_pole }}</p>
+
+    <h2>Activate Invite Code</h2>
+    <form method="post" action="{% url 'users:profile' user.id %}">
+        {% csrf_token %}
+        <label for="invite_code">Invite Code:</label>
+        <input type="text" id="invite_code" name="invite_code" required>
+        <button type="submit">Activate</button>
+    </form>
+
+    <h2>Users Who Used Your Invite Code</h2>
+    <ul>
+        {% for u in users_who_used_invite_code %}
+            <li>{{ u.phone_number }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
+{% endblock %}

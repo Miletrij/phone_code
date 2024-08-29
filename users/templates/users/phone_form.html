@@ -1,0 +1,19 @@
+{% extends 'users/base.html' %}
+{% block content %}
+
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Phone Number Input</title>
+</head>
+<body>
+    <h1>Enter Your Phone Number</h1>
+    <form method="post" action="{% url 'users:phone' %}">
+        {% csrf_token %}
+        <label for="phone_number">Phone Number:</label>
+        <input type="text" id="phone_number" name="phone_number" required>
+        <button type="submit">Send Code</button>
+    </form>
+</body>
+</html>
+{% endblock %}

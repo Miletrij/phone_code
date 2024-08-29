@@ -4,31 +4,99 @@ from random import choices
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
+from django.http import Http404
 from django.shortcuts import redirect, render
 
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView, CreateView, ListView, DetailView, UpdateView, DeleteView
-from rest_framework import generics, request
+from rest_framework import generics, request, status
 
 from django.contrib.auth import login
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from users.forms import UserLoginForm, UserRegisterForm
+# from users.forms import UserLoginForm, UserRegisterForm
 from users.models import User
-from users.serializers import UserSerializer
+from users.serializers import UserSerializer, PhoneNumberSerializer, VerificationCodeSerializer, InviteCodeSerializer
 
 letters_and_digits = ascii_lowercase + digits
 
 
-class UserCreateAPIView(CreateView):
-    model = User
-    form_class = UserRegisterForm
-    success_url = reverse_lazy('users/login.html')
+class PhoneNumberView(APIView):
+    def get(self, request):
+        return render(request, 'users/phone_form.html')
 
-    def form_valid(self, form):
-        recipient = form.save()
-        recipient.owner = self.request.user
-        recipient.save()
-        return super().form_valid(form)
+    def post(self, request):
+        serializer = PhoneNumberSerializer(data=request.data)
+        if serializer.is_valid():
+            phone_number = serializer.validated_data['phone_number']
+            verification_code = str(random.randint(1000, 9999))
+            request.session['phone_number'] = phone_number
+            request.session['verification_code'] = verification_code
+            print(f'SIMULATED SMS SENT TO {phone_number}: Your verification code is: {verification_code}')
+            return redirect('users:verify')
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class VerificationView(APIView):
+    def get(self, request):
+        return render(request, 'users/verification_form.html')
+
+    def post(self, request):
+        serializer = VerificationCodeSerializer(data=request.data)
+        if serializer.is_valid():
+            code = serializer.validated_data['code']
+            if code == request.session.get('verification_code'):
+                phone_number = request.session.get('phone_number')
+                user, created = User.objects.get_or_create(phone_number=phone_number)
+                return redirect('users:profile', user_id=user.id)
+            return render(request, 'verification_form.html', {'error': 'Invalid code'})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserProfileView(APIView):
+    def get(self, request, user_id):
+        try:
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            raise Http404
+
+        users_who_used_invite_code = User.objects.filter(invite_pole=user.invite_code)
+        return render(request, 'users/profile.html', {'user': user, 'users_who_used_invite_code': users_who_used_invite_code})
+
+    def post(self, request, user_id):
+        user = User.objects.get(id=user_id)
+        serializer = InviteCodeSerializer(data=request.data)
+        if serializer.is_valid():
+            invite_code = serializer.validated_data['invite_code']
+            if User.objects.filter(invite_code=invite_code).exists():
+                user.invite_pole = invite_code
+                user.save()
+                return redirect('users:profile', user_id=user.id)
+            return render(request, 'users/profile.html', {'user': user, 'error': 'Invalid invite code'})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserListView(ListView):
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+
+
+class HomeView(TemplateView):
+    template_name = 'users/base.html'
+
+
+# class UserCreateAPIView(CreateView):
+#     model = User
+#     form_class = UserRegisterForm
+#     success_url = reverse_lazy('users:login')
+#
+#     def form_valid(self, form):
+#         recipient = form.save()
+#         recipient.owner = self.request.user
+#         recipient.save()
+#         return super().form_valid(form)
 
 # class UserCreateAPIView(LoginRequiredMixin, CreateView):
 #     serializer_class = UserSerializer
@@ -52,69 +120,50 @@ class UserCreateAPIView(CreateView):
 #         user.save()
 
 
-class UserListAPIView(ListView):
-    serializer_class = UserSerializer
-    queryset = User.objects.all()
+# class UserRetrieveAPIView(DetailView):
+#     serializer_class = UserSerializer
+#     queryset = User.objects.all()
 
 
-class UserRetrieveAPIView(DetailView):
-    serializer_class = UserSerializer
-    queryset = User.objects.all()
+# class UserUpdateAPIView(UpdateView):
+#     serializer_class = UserSerializer
+#     queryset = User.objects.all()
+#
+#     def get_success_url(self):
+#         return reverse_lazy('user:user_list', kwargs={'pk': self.get_object().id})
+#
+#
+# class UserDestroyAPIView(DeleteView):
+#     queryset = User.objects.all()
 
 
-class UserUpdateAPIView(UpdateView):
-    serializer_class = UserSerializer
-    queryset = User.objects.all()
-
-    def get_success_url(self):
-        return reverse_lazy('user:user_list', kwargs={'pk': self.get_object().id})
-
-
-class UserDestroyAPIView(DeleteView):
-    queryset = User.objects.all()
-
-
-class UserLoginView(LoginView):
-    template_name = 'users/login.html'
-    form_class = UserLoginForm
-
-    # success_url = reverse_lazy("users:index")
-
-    def get_success_url(self):
-        # return reverse("users/index.html")
-        return redirect('/')
+# class UserLoginView(LoginView):
+#     template_name = 'users/login.html'
+#     form_class = UserLoginForm
+#
+#     # success_url = reverse_lazy("users:index")
+#
+#     def get_success_url(self):
+#         # return reverse("users/index.html")
+#         return redirect('/')
 
 
-def auth_login_view(request):
-    if request.method == "POST":
-        form = UserLoginForm(request.POST)
-        if form.is_valid():
-            phone = form.cleaned_data.get("phone")
-            phone_code = form.cleaned_data.get("phone_code")
-            user = User.objects.filter(phone=phone, phone_code=phone_code).first()
-            if user:
-                login(request, user)
-                return redirect('/')
-            else:
-                form.add_error("phone", "пользователь не найден!!!")
-            # elif:
-            #     form.add_error("phone_code", "код авторизации не совпадает!!!")
-            #     "дописать форму else при отсутствии пользователя и неправильном пароле + отправка на страницу регистрации"
-    else:
-        form = UserLoginForm()
-
-    return render(request, "users/login.html", {"form": form})
-
-
-class HomeView(TemplateView):
-    template_name = 'users/index.html'
-
-
-class UserPoleAPIView(ListView):
-    template_name = 'users/invite_code.html'
-    serializer_class = UserSerializer
-    queryset = User.objects.filter(invite_pole="invite_pole")
-
-    class Meta:
-        model = User
-        fields = ("invite_pole",)
+# def auth_login_view(request):
+#     if request.method == "POST":
+#         form = UserLoginForm(request.POST)
+#         if form.is_valid():
+#             phone = form.cleaned_data.get("phone")
+#             phone_code = form.cleaned_data.get("phone_code")
+#             user = User.objects.filter(phone=phone, phone_code=phone_code).first()
+#             if user:
+#                 login(request, user)
+#                 return redirect('/')
+#             else:
+#                 form.add_error("phone", "пользователь не найден!!!")
+#             # elif:
+#             #     form.add_error("phone_code", "код авторизации не совпадает!!!")
+#             #     "дописать форму else при отсутствии пользователя и неправильном пароле + отправка на страницу регистрации"
+#     else:
+#         form = UserLoginForm()
+#
+#     return render(request, "users/login.html", {"form": form})
