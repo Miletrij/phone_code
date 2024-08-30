@@ -23,6 +23,10 @@ letters_and_digits = ascii_lowercase + digits
 
 
 class PhoneNumberView(APIView):
+    """
+    Авторизация по номеру телефона, включая ввод номера,
+    генерацию и отправку верификационного кода, а также перенаправление на страницу верификации.
+    """
     def get(self, request):
         return render(request, 'users/phone_form.html')
 
@@ -40,6 +44,10 @@ class PhoneNumberView(APIView):
 
 
 class VerificationView(APIView):
+    """
+    Обеспечивает процесс верификации кода, отправленного на номер телефона, включая ввод кода,
+    проверку его корректности, получение или создание пользователя, а также перенаправление на страницу профиля.
+    """
     def get(self, request):
         return render(request, 'users/verification_form.html')
 
@@ -56,6 +64,10 @@ class VerificationView(APIView):
 
 
 class UserProfileView(APIView):
+    """
+    Обеспечивает отображение и обновление профиля пользователя, включая отображение списка пользователей,
+    которые использовали его инвайт-код, а также возможность ввода и проверки инвайт-кода.
+    """
     def get(self, request, user_id):
         try:
             user = User.objects.get(id=user_id)
@@ -79,91 +91,15 @@ class UserProfileView(APIView):
 
 
 class UserListView(ListView):
+    """
+    Выводит список всех пользователей
+    """
     serializer_class = UserSerializer
     queryset = User.objects.all()
 
 
 class HomeView(TemplateView):
+    """
+    Домашняя страница сайта
+    """
     template_name = 'users/base.html'
-
-
-# class UserCreateAPIView(CreateView):
-#     model = User
-#     form_class = UserRegisterForm
-#     success_url = reverse_lazy('users:login')
-#
-#     def form_valid(self, form):
-#         recipient = form.save()
-#         recipient.owner = self.request.user
-#         recipient.save()
-#         return super().form_valid(form)
-
-# class UserCreateAPIView(LoginRequiredMixin, CreateView):
-#     serializer_class = UserSerializer
-#     queryset = User.objects.all()
-#     fields = ("phone", "phone_code",)
-#
-#     def perform_create(self, serializer):
-#         user = serializer.save()
-#         # user.set_password(user.password)
-#         auth_code = random.randint(1000, 9999)
-#         user.phone_code = "Код отправленный в смс: " + str(auth_code)
-#         user.is_active = False
-#         user.save()
-#
-#     def perform_update(self, serializer):
-#         user = serializer.save()
-#         # user.set_password(user.password)
-#         # invite_code = ''.join(choices(letters_and_digits, k=6))
-#         # user.invite_code = invite_code
-#         user.is_active = True
-#         user.save()
-
-
-# class UserRetrieveAPIView(DetailView):
-#     serializer_class = UserSerializer
-#     queryset = User.objects.all()
-
-
-# class UserUpdateAPIView(UpdateView):
-#     serializer_class = UserSerializer
-#     queryset = User.objects.all()
-#
-#     def get_success_url(self):
-#         return reverse_lazy('user:user_list', kwargs={'pk': self.get_object().id})
-#
-#
-# class UserDestroyAPIView(DeleteView):
-#     queryset = User.objects.all()
-
-
-# class UserLoginView(LoginView):
-#     template_name = 'users/login.html'
-#     form_class = UserLoginForm
-#
-#     # success_url = reverse_lazy("users:index")
-#
-#     def get_success_url(self):
-#         # return reverse("users/index.html")
-#         return redirect('/')
-
-
-# def auth_login_view(request):
-#     if request.method == "POST":
-#         form = UserLoginForm(request.POST)
-#         if form.is_valid():
-#             phone = form.cleaned_data.get("phone")
-#             phone_code = form.cleaned_data.get("phone_code")
-#             user = User.objects.filter(phone=phone, phone_code=phone_code).first()
-#             if user:
-#                 login(request, user)
-#                 return redirect('/')
-#             else:
-#                 form.add_error("phone", "пользователь не найден!!!")
-#             # elif:
-#             #     form.add_error("phone_code", "код авторизации не совпадает!!!")
-#             #     "дописать форму else при отсутствии пользователя и неправильном пароле + отправка на страницу регистрации"
-#     else:
-#         form = UserLoginForm()
-#
-#     return render(request, "users/login.html", {"form": form})
