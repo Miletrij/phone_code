@@ -4,15 +4,15 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Phone Number Input</title>
+    <title>Ввод номера телефона</title>
 </head>
 <body>
-    <h1>Enter Your Phone Number</h1>
+    <h4>Введите ваш номер телефона в поле ниже</h4>
     <form method="post" action="{% url 'users:phone' %}">
         {% csrf_token %}
-        <label for="phone_number">Phone Number:</label>
+        <label for="phone_number">Поле для ввода номера телефона:</label>
         <input type="text" id="phone_number" name="phone_number" required>
-        <button type="submit">Send Code</button>
+        <button type="submit">Получить код</button>
     </form>
 </body>
 </html>

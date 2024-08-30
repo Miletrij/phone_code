@@ -4,23 +4,23 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>User Profile</title>
+    <title>Профиль пользователя</title>
 </head>
 <body>
-    <h1>User Profile</h1>
-    <p>Phone Number: {{ user.phone_number }}</p>
-    <p>Invite Code: {{ user.invite_code }}</p>
-    <p>Activated Invite Code: {{ user.invite_pole }}</p>
+    <h3>Профиль пользователя {{ user.phone_number }}</h3>
+    <p>Телефон пользователя: {{ user.phone_number }}</p>
+    <p>Код для приглашения: {{ user.invite_code }}</p>
+    <p>Активированный код приглашения: {{ user.invite_pole }}</p>
 
-    <h2>Activate Invite Code</h2>
+    <h5>Для активации кода приглашения, введите его в поле ниже</h5>
     <form method="post" action="{% url 'users:profile' user.id %}">
         {% csrf_token %}
-        <label for="invite_code">Invite Code:</label>
+        <label for="invite_code">Поле для кода приглашения:</label>
         <input type="text" id="invite_code" name="invite_code" required>
-        <button type="submit">Activate</button>
+        <button type="submit">Активировать код</button>
     </form>
 
-    <h2>Users Who Used Your Invite Code</h2>
+    <h4>Приглашенные пользователи</h4>
     <ul>
         {% for u in users_who_used_invite_code %}
             <li>{{ u.phone_number }}</li>
