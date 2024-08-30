@@ -33,7 +33,7 @@ class PhoneNumberView(APIView):
             verification_code = str(random.randint(1000, 9999))
             request.session['phone_number'] = phone_number
             request.session['verification_code'] = verification_code
-            print(f'SIMULATED SMS SENT TO {phone_number}: Your verification code is: {verification_code}')
+            print(f'Эмуляции отправки смс-кода на номер: {phone_number}: Ваш код верификации: {verification_code}')
             return redirect('users:verify')
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
