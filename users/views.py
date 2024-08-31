@@ -59,7 +59,7 @@ class VerificationView(APIView):
                 phone_number = request.session.get('phone_number')
                 user, created = User.objects.get_or_create(phone_number=phone_number)
                 return redirect('users:profile', user_id=user.id)
-            return render(request, 'verification_form.html', {'error': 'Invalid code'})
+            return render(request, 'users/verification_form.html', {'error': 'Неверный код верификации'})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -86,7 +86,7 @@ class UserProfileView(APIView):
                 user.invite_pole = invite_code
                 user.save()
                 return redirect('users:profile', user_id=user.id)
-            return render(request, 'users/profile.html', {'user': user, 'error': 'Invalid invite code'})
+            return render(request, 'users/profile.html', {'user': user, 'error': 'Неверный код приглашения'})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

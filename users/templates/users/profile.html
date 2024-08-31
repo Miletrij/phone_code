@@ -19,6 +19,9 @@
         <input type="text" id="invite_code" name="invite_code" required>
         <button type="submit">Активировать код</button>
     </form>
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
 
     <h4>Приглашенные пользователи</h4>
     <ul>
