@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-PATH_DB = BASE_DIR / ".envv"
+PATH_DB = BASE_DIR / ".env"
 load_dotenv(PATH_DB)
 
 # Quick-start development settings - unsuitable for production
@@ -86,6 +86,7 @@ DATABASES = {
         'NAME': os.getenv('POSTGRES_NAME'),
         'USER': os.getenv('POSTGRES_USER'),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+        'HOST': os.getenv('POSTGRES_HOST'),
     }
 }
 
@@ -138,3 +139,6 @@ REST_FRAMEWORK = {
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL')
+CELERY_BACKEND_URL = os.getenv('CELERY_BACKEND_URL')
