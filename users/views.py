@@ -1,21 +1,15 @@
 import random
 from string import ascii_lowercase, digits
-from random import choices
 
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import LoginView
 from django.http import Http404
 from django.shortcuts import redirect, render
 
-from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView, CreateView, ListView, DetailView, UpdateView, DeleteView
-from rest_framework import generics, request, status
+from rest_framework import status
 
-from django.contrib.auth import login
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-# from users.forms import UserLoginForm, UserRegisterForm
 from users.models import User
 from users.serializers import UserSerializer, PhoneNumberSerializer, VerificationCodeSerializer, InviteCodeSerializer
 
