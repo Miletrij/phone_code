@@ -4,7 +4,7 @@ from string import ascii_lowercase, digits
 from django.http import Http404
 from django.shortcuts import redirect, render
 
-from django.views.generic import TemplateView, CreateView, ListView, DetailView, UpdateView, DeleteView
+from django.views.generic import TemplateView, ListView
 from rest_framework import status
 
 from rest_framework.response import Response
